@@ -1,0 +1,14 @@
+snapshot:
+  stage: deploy
+  script:
+    - mvn deploy
+  only:
+    - master
+  when: manual
+
+release:
+  stage: deploy
+  script:
+    - mvn deploy
+  only:
+    - tags
