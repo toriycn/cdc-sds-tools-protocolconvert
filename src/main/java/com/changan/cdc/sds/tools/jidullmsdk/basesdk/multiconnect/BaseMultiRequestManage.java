@@ -41,11 +41,11 @@ public class BaseMultiRequestManage {
                     while(runState.get()){
                         checkTimeout();
                         sleep(NetRequestParameter.DEFAULT_MANAGE_RUNSTATE_SLEEPTIME);
-                        if(checkTimeOutTimes.getAndIncrement() >5){
-                            communicateWebSocketEvent.onExit();
-                            runState.set(false);
-                            break;
-                        }
+//                        if(checkTimeOutTimes.getAndIncrement() >5){
+//                            communicateWebSocketEvent.onExit();
+//                            runState.set(false);
+//                            break;
+//                        }
                     }
                 }
                 catch(Exception ex){

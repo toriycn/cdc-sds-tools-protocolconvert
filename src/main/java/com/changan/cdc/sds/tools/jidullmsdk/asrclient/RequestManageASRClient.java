@@ -13,8 +13,9 @@ import java.util.*;
 
 public class RequestManageASRClient {
 
-//    private static final String BASE_URL = "ws://10.74.247.20:9888/iflytek/v1/autocar";
-    private static final String BASE_URL = "ws://dev-edc.sda.changan.com.cn/cloudservice/ws/iflytek/v1/autoCar";
+    private static final String BASE_URL = "ws://121.199.45.98:19000/iflytek/v1/autocar";
+//    private static final String BASE_URL = "ws://pre-sds.sda.changan.com.cn/dubhe/dubhe-gateway/iflytek/v1/autoCar";
+//    private static final String BASE_URL = "ws://dev-edc.sda.changan.com.cn/dubhe/dubhe-gateway/iflytek/v1/autoCar";
 //    iflytek/v1/autoCar
     private static final String param = "{\"aue\":\"raw\",\"auth_id\":\"c73b57ffdc513bab6ed829b023b97769\",\"sample_rate\":\"16000\",\"result_level\":\"complete\",\"data_type\":\"audio\",\"scene\":\"main\",\"pers_param\":\"{\\\"uid\\\":\\\"c73b57ffdc513bab6ed829b023b97769\\\"}\"}";
     // APIKEY，见AIUI开放平台
@@ -132,7 +133,7 @@ public class RequestManageASRClient {
             RequestManageASRClient test = new RequestManageASRClient();
             String END_FLAG = "--end--";
             String sid = i+"";
-            String filepath = "./1.pcm";
+            String filepath = "./0.pcm";
             byte[] bytes = new byte[CHUNCKED_SIZE];
             try (RandomAccessFile raf = new RandomAccessFile(filepath, "r")) {
                 int len = -1;
@@ -141,10 +142,10 @@ public class RequestManageASRClient {
                         bytes = Arrays.copyOfRange(bytes, 0, len);
                     }
                     test.send(sid,bytes);
-                    Thread.sleep(40);
+                    Thread.sleep(100);
                 }
-                test.send(sid, END_FLAG.getBytes());
-//                test.send(sid, END_FLAG);
+//                test.send(sid, END_FLAG.getBytes());
+                test.send(sid, END_FLAG);
             } catch (Exception e) {
                 e.printStackTrace();
             }

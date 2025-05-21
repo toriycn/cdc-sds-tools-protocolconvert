@@ -27,8 +27,9 @@ public class RequestManageTTS {
     private ConcurrentHashMap<String,TtsRequestObject> resultConcurrentHashMap = new ConcurrentHashMap();
     private Selector selector = null;
     private AtomicBoolean runState = new AtomicBoolean(false);
-//    private String url = "wss://z1-pre-tusys.sda.changan.com.cn:443/tu-apigw/tts/api/v1/tu/text-to-speech/bidirection";
-    private String url = "wss://dev-edc.sda.changan.com.cn/cloudservice/ws/dispatch/tts/1/3";
+    private String url = "wss://z1-pre-tusys.sda.changan.com.cn:443/tu-apigw/tts/api/v1/tu/text-to-speech/bidirection";
+//    private String url = "wss://dev-edc.sda.changan.com.cn//ws/dispatch/tts/133";
+//private String url = "ws://127.0.0.1:8080/dispatch/tts/133";
     public RequestManageTTS(){
         try {
             selector = Selector.open();
@@ -102,6 +103,7 @@ public class RequestManageTTS {
             @Override
             public void onClosed(BaseDirective payload) {
                 System.out.println(JSONObject.toJSONString(payload));
+                manageFactory.exit(url);
             }
 
             @Override
@@ -252,55 +254,18 @@ public class RequestManageTTS {
     }
 
     public static void main(String[] args) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < 1; i++) {
-//                    int CHUNCKED_SIZE = 1280;
-//                    LLMRequestManageASRClient test = new LLMRequestManageASRClient();
-//                    String END_FLAG = "--end--";
-//                    String sid = i+"";
-//                    String filepath = "./1.pcm";
-//                    byte[] bytes = new byte[CHUNCKED_SIZE];
-//                    try (RandomAccessFile raf = new RandomAccessFile(filepath, "r")) {
-//                        int len = -1;
-//                        while ((len = raf.read(bytes)) != -1) {
-//                            if (len < CHUNCKED_SIZE) {
-//                                bytes = Arrays.copyOfRange(bytes, 0, len);
-//                            }
-//                            test.send(sid,bytes);
-//                            Thread.sleep(40);
-//                        }
-//                        test.send(sid, END_FLAG.getBytes());
-////                test.send(sid, END_FLAG);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    test.stop();
-//                }
-//            }
-//        }).start();
         RequestManageTTS test = new RequestManageTTS();
-
         test.start();
-
-        test.create("1","2017年，入选StubHub平台“全球十大巡演票房畅销女歌手”，并获得Mnet亚洲音乐大奖“最佳亚洲艺人奖”。2021年，其歌曲《光年之外》的MV被吉尼斯世界纪录认证为“YouTube上观看次数最多的中文音乐视频”。2022年发行音乐专辑《启示录》。2023年，举行邓紫棋“I AM GLORIA”世界巡回演唱会。2025年4月2日，成为签约作家。");
-        test.create("1","导航到四通桥");
-        test.create("3","你是谁");
-        test.create("4","你是谁");
-        test.create("5","你是谁");
-
-        try {
-            Thread.sleep(100000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        for(int i=0;i<1;i++){
+            test.create(String.valueOf(i),"打开屏幕偏暖模式");
+//        test.destory();
+            try {
+                Thread.sleep(10*1000);
+                test.stop(String.valueOf(i));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-        test.destory();
     }
 
 }

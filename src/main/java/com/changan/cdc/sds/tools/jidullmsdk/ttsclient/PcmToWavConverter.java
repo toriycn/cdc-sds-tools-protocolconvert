@@ -5,7 +5,7 @@ import java.io.*;
 public class PcmToWavConverter {
 
     public static void main(String[] args) {
-        String pcmFilePath = "D:\\workspace\\github\\cdc-sds-tools-protocolconvert\\4.pcm";
+        String pcmFilePath = "D:\\workspace\\github\\cdc-sds-tools-protocolconvert\\0.pcm";
         String wavFilePath = "output.wav";
         int sampleRate = 22050; // 采样率
         int channels = 1; // 声道数

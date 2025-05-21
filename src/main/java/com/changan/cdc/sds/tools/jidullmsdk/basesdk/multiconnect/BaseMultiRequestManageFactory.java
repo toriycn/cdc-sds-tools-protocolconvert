@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 //用来进行状态控制
-public class BaseMultiRequestManageFactory{
+public class BaseMultiRequestManageFactory extends CommunicateWebSocketFactoryEvent{
     private ConcurrentHashMap<String, BaseMultiRequestManage> wsHashMap= new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, CommunicateWebSocketFactoryEvent> wsHashEventMap= new ConcurrentHashMap<>();
     private static BaseMultiRequestManageFactory mInstance;
@@ -40,6 +40,9 @@ public class BaseMultiRequestManageFactory{
                 CommunicateWebSocketEvent event = wsHashEventMap.get(url);
                 if(event != null){
                     this.setUrlEvent(url,event);
+                }
+                else{
+                    this.setUrlEvent(url,new DefaultCommunicateWebSocketEvent());
                 }
                 baseMultiRequestManage = new BaseMultiRequestManage(url,wsHashEventMap.get(url));
                 wsHashMap.put(url,baseMultiRequestManage);

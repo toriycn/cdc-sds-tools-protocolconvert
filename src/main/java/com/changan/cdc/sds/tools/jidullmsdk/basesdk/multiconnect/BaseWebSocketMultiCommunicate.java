@@ -95,7 +95,7 @@ public class BaseWebSocketMultiCommunicate extends WebSocketListener {
                 }
             }
         }.run();
-        output("BaseWebSocketMultiCommunicate: onMessage: " + text);
+        output("BaseWebSocketMultiCommunicate: onMessage: " + text+";communicateState:"+communicateState.get());
     }
 
     @Override
@@ -210,7 +210,12 @@ public class BaseWebSocketMultiCommunicate extends WebSocketListener {
     }
 
     private void output(String s) {
-        webSocketInfo.getCommunicateWebSocketEvent().outputLog(s);
+        if(webSocketInfo.getCommunicateWebSocketEvent() != null){
+            webSocketInfo.getCommunicateWebSocketEvent().outputLog(s);
+        }
+        else{
+            System.out.println("BaseWebSocketMultiCommunicate check websocket output event is null: "+s);
+        }
     }
 
     public Boolean checkTimeout() {

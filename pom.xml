@@ -6,7 +6,7 @@
 
     <groupId>com.changan.cdc.sds</groupId>
     <artifactId>cdc-sds-tools-protocolcovert</artifactId>
-    <version>1.1.21</version>
+    <version>1.1.23</version>
 <dependencies>
     <dependency>
         <groupId>com.alibaba</groupId>
