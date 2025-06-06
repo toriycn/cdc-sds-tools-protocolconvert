@@ -1,18 +1,17 @@
 package com.changan.cdc.sds.tools.jidullmsdk.llmsdk;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.changan.cdc.sds.tools.jidullmsdk.BaseDirective;
-import com.changan.cdc.sds.tools.jidullmsdk.NetRequestParameter;
 import com.changan.cdc.sds.tools.jidullmsdk.basesdk.CommunicateWebSocketEvent;
 import com.changan.cdc.sds.tools.jidullmsdk.basesdk.multiconnect.BaseMultiRequestManageFactory;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class RequestManageLLM extends CommunicateWebSocketEvent{
@@ -68,15 +67,37 @@ public class RequestManageLLM extends CommunicateWebSocketEvent{
             System.out.println(JSONObject.toJSONString(payload));
             JSONObject object = JSONObject.parseObject(payload.getPayload());
             String data = object.getString("data");
-            List<String> collectString= new ArrayList<String>();
-            collectString.addAll(Arrays.asList(data.split(",")));
-            collectClientInfo(collectString,object.getString("requestId"));
+            if(data.contains("camera")){
+                RequestManageLLM.getInstance().sendFile(object.getString("requestId"),"D:\\workspace\\github\\cdc-sds-tools-protocolconvert\\","dog.jpeg","{}");
+            }
+            else if(data.contains("设置")){
+                RequestObjectOnLLM requestObjectOnLLM = new RequestObjectOnLLM();
+                //消息类型，需要协商
+                requestObjectOnLLM.setType("CLIENT_STATUS_COLLECT");
+                JSONObject returnMsg = new JSONObject();
+                returnMsg.put("requestId",object.getString("requestId"));
+                //消息payload可以自定义json
+                returnMsg.put("airConditionTemperature",extractNumbers(data));
+                requestObjectOnLLM.setPayload(returnMsg.toJSONString());
+                //普通消息上送
+                RequestManageLLM.getInstance().send("CLIENT_STATUS_COLLECT",requestObjectOnLLM);
+            }
+            else{
+                List<String> collectString= new ArrayList<String>();
+                collectString.addAll(Arrays.asList(data.split(",")));
+                collectClientInfo(collectString,object.getString("requestId"));
+            }
             if (pevent != null) {
                 pevent.onReceiveMsg(payload);
             }
         }catch (Exception ex){
             ex.printStackTrace();
         }
+    }
+    public static String extractNumbers(String str) {
+        Pattern pattern = Pattern.compile("[^0-9]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.replaceAll("").trim();
     }
 
     private  void collectClientInfo( List<String> keyList,String requestId) throws Exception {
@@ -86,7 +107,11 @@ public class RequestManageLLM extends CommunicateWebSocketEvent{
         JSONObject returnMsg = new JSONObject();
         returnMsg.put("requestId",requestId);
         for(String key:keyList){
-            returnMsg.put(key, new Random().nextInt(100));
+            if(key.contains("温度")){
+                returnMsg.put(key, 86);
+            }else{
+                returnMsg.put(key, new Random().nextInt(100));
+            }
         }
         //消息payload可以自定义json
         requestObjectOnLLM.setPayload(returnMsg.toJSONString());
@@ -183,9 +208,9 @@ public class RequestManageLLM extends CommunicateWebSocketEvent{
         //       一种是直接发起；有连接；一种是网络断开一会又恢复。
         // 使用前必须设定 服务端url和tuid
         //最终请求路径为：baseurl+"/"+tuid+"/"+connectionSN; 其中connectionSN外部不可见
-//        RequestManageLLM.getInstance().setUrl("wss://dev-edc.sda.changan.com.cn/dubhe/dubhe-gateway/dispatch/llm","tuid1");
+        RequestManageLLM.getInstance().setUrl("wss://dev-edc.sda.changan.com.cn/dubhe/dubhe-gateway/dispatch/llm","tuid1");
 
-        RequestManageLLM.getInstance().setUrl("ws://127.0.0.1:8080/dispatch/llm","tuid1");
+//        RequestManageLLM.getInstance().setUrl("ws://127.0.0.1:8080/dispatch/llm","tuid1");
         RequestManageLLM.getInstance().enableAlwaysConnect();
         //同步事件：
         //           filePath :文件路径，不带分隔符
@@ -195,7 +220,7 @@ public class RequestManageLLM extends CommunicateWebSocketEvent{
         //           -2 文件不可读
         //           -3表示其他错误
         //           0 发送完成
-        RequestManageLLM.getInstance().sendFile(UUID.randomUUID().toString(),"D:\\workspace\\github\\cdc-sds-tools-protocolconvert\\","output.wav","{}");
+//        RequestManageLLM.getInstance().sendFile(UUID.randomUUID().toString(),"D:\\workspace\\github\\cdc-sds-tools-protocolconvert\\","pic.png","{}");
 
 //        //普通消息上送,
 //        RequestObjectOnLLM requestObjectOnLLM = new RequestObjectOnLLM();
